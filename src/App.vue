@@ -1,22 +1,25 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+    <TableComponent/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import TableComponent from './components/table'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    TableComponent
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+@import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css';
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
