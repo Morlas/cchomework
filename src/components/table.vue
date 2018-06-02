@@ -4,16 +4,16 @@
   <div class="input-group-prepend">
     <span class="input-group-text" id="basic-addon1"><icon name="user"></icon></span>
   </div>
-    <input type="text" v-model="newUser" class="form-control" placeholder="Add user">
+    <input type="text" v-model="newUser" class="add-user form-control" placeholder="Add user">
     <div class="input-group-append">
-      <button class="btn outline-secondary" v-on:click="addUser"><icon name="user-plus"></icon></button>
+      <button class="add-user-button btn outline-secondary" v-on:click="addUser"><icon name="user-plus"></icon></button>
     </div>
   </div>
   <div class="input-group mb-3">
   <div class="input-group-prepend">
     <span class="input-group-text" id="basic-addon1"><icon name="search"></icon></span>
   </div>
-  <input v-model="search" class="form-control" placeholder="Filter users by name (case sensitive)">
+  <input v-model="search" class="search-user form-control" placeholder="Filter users by name (case sensitive)">
   </div>
   <table class="table table-bordered">
    <thead>
@@ -26,11 +26,10 @@
         <td>{{user.name}}
           <button class="btn delete-user btn-danger" v-on:click="deleteUser(user)"><icon name="times"></icon></button>
           <b-btn class="btn btn-warning edit-user-trigger" v-on:click="editedUser = user" v-b-modal.edit-user><icon name="edit"></icon></b-btn>
-        </td>        
+        </td>
       </tr>
       <tr v-if="search !== ''" v-for="user in filteredUsers" :key="user.name">
-        <td>{{user.name}}<button class="btn delete-user btn-danger" v-on:click="deleteUser(user)"><icon name="times"></icon></button></td>
-      </tr>
+        <td>{{user.name}}<button class="btn delete-user btn-danger" v-on:click="deleteUser(user)"><icon name="times"></icon></button></td>      </tr>
     </tbody>
   </table>
   <p>
@@ -74,7 +73,7 @@ export default {
       .then(resp => resp.json())
       .then(resp => {
         this.tableData = resp
-      })      
+      })
   },
   methods: {
     addUser: function () {
@@ -90,7 +89,7 @@ export default {
 
     editUser: function () {
       this.tableData.splice(this.tableData.indexOf(this.editedUser), 1)
-      this.tableData.push({ name: this.newUserName }) 
+      this.tableData.push({ name: this.newUserName })
     },
 
     sort: function (sortBy) {
@@ -123,7 +122,7 @@ export default {
       }
     },
     sortedUsers: function () {
-      return this.tableData
+      return Array.from(this.tableData)
         .sort((a, b) => {
           const sort = this.currSort
           let modifier = this.currSortDir === 'ASC' ? 1 : -1
@@ -165,7 +164,7 @@ thead {
   float: right;
   padding: 0px 8px;
   margin-right: 5px;
- 
+
   svg.fa-icon {
     margin-top: 5px;
     color: #fff;
@@ -184,7 +183,4 @@ thead {
     width: auto;
   }
 }
-
-
-
 </style>

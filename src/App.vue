@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <TableComponent/>
+    <Table/>
   </div>
 </template>
 
 <script>
-import TableComponent from './components/table'
+import Table from './components/table'
 
 export default {
   name: 'App',
   components: {
-    TableComponent
+    Table
   }
 }
 </script>
