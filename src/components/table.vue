@@ -6,7 +6,7 @@
   </div>
     <input type="text" v-model="newUser" class="add-user form-control" placeholder="Add user">
     <div class="input-group-append">
-      <button class="add-user-button btn outline-secondary" v-on:click="addUser"><icon name="user-plus"></icon></button>
+      <button class="add-user-button btn outline-secondary" v-on:click="addUser()"><icon name="user-plus"></icon></button>
     </div>
   </div>
   <div class="input-group mb-3">
@@ -18,13 +18,13 @@
   <table class="table table-bordered">
    <thead>
       <tr>
-        <th v-on:click="sort('name')">Name</th>
+        <th class="sort-by" v-on:click="sort('name')">Name</th>
       </tr>
     </thead>
     <tbody>
       <tr v-if="search === ''" v-for="user in sortedUsers" :key="user.name">
         <td>{{user.name}}
-          <button class="btn delete-user btn-danger" v-on:click="deleteUser(user)"><icon name="times"></icon></button>
+          <button class="btn delete-user btn-danger" v-on:click="deleteUser(user, true)"><icon name="times"></icon></button>
           <b-btn class="btn btn-warning edit-user-trigger" v-on:click="editedUser = user" v-b-modal.edit-user><icon name="edit"></icon></b-btn>
         </td>
       </tr>
@@ -56,7 +56,7 @@ export default {
   name: 'Table',
   data: function () {
     return {
-      tableData: [],
+      usersList: [],
       sortedData: [],
       currSort: 'name',
       currSortDir: 'ASC',
@@ -72,24 +72,29 @@ export default {
     fetch('https://jsonplaceholder.typicode.com/users')
       .then(resp => resp.json())
       .then(resp => {
-        this.tableData = resp
+        this.usersList = resp
       })
   },
   methods: {
-    addUser: function () {
+    addUser: function (optionalName) {
       if (this.newUser !== '') {
-        this.tableData.push({ name: this.newUser })
+        this.usersList.push({ name: this.newUser })
+      } else if (optionalName) {
+        this.usersList.push({ name: optionalName })
       }
+      return this
     },
-    deleteUser: function (user) {
-      if (confirm('Are you sure you want to delete ' + user.name + '?')) {
-        this.tableData.splice(this.tableData.indexOf(user), 1)
+    deleteUser: function (user, toConfirm) {
+      if (toConfirm) {
+        if (confirm('Are you sure you want to delete ' + user.name + '?')) {
+          this.usersList.splice(this.usersList.indexOf(user), 1)
+        }
       }
+      return this
     },
 
     editUser: function () {
-      this.tableData.splice(this.tableData.indexOf(this.editedUser), 1)
-      this.tableData.push({ name: this.newUserName })
+      this.deleteUser(this.editedUser, false).addUser(this.newUserName)
     },
 
     sort: function (sortBy) {
@@ -100,7 +105,7 @@ export default {
     },
 
     nextPage: function () {
-      if (this.currPage * this.pageSize < this.tableData.length) {
+      if (this.isNextPage()) {
         this.currPage++
       }
     },
@@ -109,6 +114,10 @@ export default {
       if (this.currPage > 1) {
         this.currPage--
       }
+    },
+
+    isNextPage: function () {
+      return this.currPage * this.pageSize < this.usersList.length
     }
   },
 
@@ -117,12 +126,12 @@ export default {
       return this.currPage > 1
     },
     showNextButton: function () {
-      if (this.tableData) {
-        return this.currPage * this.pageSize < this.tableData.length
+      if (this.usersList) {
+        return this.isNextPage()
       }
     },
     sortedUsers: function () {
-      return Array.from(this.tableData)
+      return Array.from(this.usersList)
         .sort((a, b) => {
           const sort = this.currSort
           let modifier = this.currSortDir === 'ASC' ? 1 : -1
